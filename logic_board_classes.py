@@ -4,41 +4,45 @@ wirecolors = {0:(255,255,255),1:(255, 100, 100), 2:(255,50,50),3:(255, 0, 0), 4:
 transcolor = [(255, 255, 255), (127, 127, 127)]
 size = 1
 
+def new_itter():
+	Unit.new_itteration = []
+	for pos in Unit.living_units:
+		Unit.units[pos].update()
+	print(Unit.new_itteration)
+	Unit.living_units = Unit.new_itteration
+
+
 class Unit():
 	units = {}
 	living_units = []
-	new_itter = []
-	directions = {"up": Vct(0, -1), "down":Vct(0, 1), "left":Vct(-1, 0), "right":(1, 0)}
+	new_itteration = []
+	directions = {"up": Vct(0, -1), "down":Vct(0, 1), "left":Vct(-1, 0), "right":Vct(1, 0)}
 	colors = {"grey": (127, 127, 127), "darkgray":(200, 200, 200), "white":(255, 255, 255), "green":(0, 255, 0)}
 	def __init__(self, pos):
 		self.pos = pos
 		self.neighbors = {}
 		self.life = 0
 		self.selected = False
-	def updateneighbors(self, units):
-		self.neighbors = []
-		for d in self.directions:
+	def updateneighbors(self):
+		self.neighbors = {}
+		for d in self.directions.values():
 			if d+self.pos in self.units:
-				neighbors[d+self.pos] = units[d+self.pos]
+				self.neighbors[d+self.pos] = self.units[d+self.pos]
 	def draw(self, screen, camera):
 		pygame.draw.rect(screen, wirecolors[self.life], (((self.pos-camera.pos+Vct(0.05, 0.05))*camera.scale).tuple(), (Vct(0.9, 0.9)*camera.scale).tuple()))
 		if self.selected:
 			pygame.draw.rect(screen, colors["green"], (((self.pos-camera.pos+Vct(0.05, 0.05))*camera.scale).tuple(), (Vct(0.9, 0.9)*camera.scale).tuple()), 1)
-	def new_itteration(self):
-		self.new_itteration = []
-		for p in self.living_units:
-			units[p].update()
-		self.living_units = self.new_itteration
 
 class Wire(Unit):
 	def update(self):
-		for u in self.neighbors:
-			if u.life == 0:
-				self.new_itter.append(u.pos)
-				u.life = 4
+		for u in self.neighbors.values():
+			if u.life == 0 and self.life == 3:
+				self.new_itteration.append(u.pos)
+				u.life = 3
 		if self.life != 0:
+			print(self.life)
 			self.life -=1
-			self.new_itter.appned(self.pos)
+			self.new_itteration.append(self.pos)
 
 	def __repr__(self):
 		return("Wire {} {}".format(self.pos.x, self.pos.y))
@@ -48,12 +52,12 @@ class Transistor(Unit):
 		super().__init__(pos)
 		self.orientation = orientation
 		self.blocked = 0
-		self.color = colors["white"]
+		self.color = self.colors["white"]
 	def update(self):
 		if self.orientation == "Transistorupdown":
 			if self.pos + directions["up"] in living_units or self.pos + directions["down"] in living_units:
-				self.life = 4
-				self.new_itter.append(self.pos)
+				self.life = 3
+				self.new_itteration.append(self.pos)
 			if self.pos + directions["left"] in living_units or self.pos + directions["right"] in living_units:
 				self.blocked = 12 
 
@@ -61,12 +65,12 @@ class Transistor(Unit):
 			if self.pos + directions["up"] in living_units or self.pos + directions["down"] in living_units:
 				self.blocked = 12 
 			if self.pos + directions["left"] in living_units or self.pos + directions["right"] in living_units:
-				self.life = 4
-				self.new_itter.append(self.pos)
+				self.life = 3
+				self.new_itteration.append(self.pos)
 
 		if self.life != 0:
 				self.life -=1
-				self.new_itter.appned(self.pos)
+				self.new_itteration.append(self.pos)
 		if self.blocked != 0:
 			self.life = 0
 			self.color = colors["grey"]
@@ -74,19 +78,20 @@ class Transistor(Unit):
 		else:
 			self.color = colors["white"]
 
-		for u in neighbors:
+		for u in neighbors.values():
 			if u.life == 0:
-				self.new_itter.append(u.pos)
-				u.life = 4
+				self.new_itteration.append(u.pos)
+				u.life = 3
 		
 
 	def draw(self, screen, camera):
+		pygame.draw.rect(screen, wirecolors[self.life], (((self.pos-camera.pos+Vct(0.05, 0.05))*camera.scale).tuple(), (Vct(0.9, 0.9)*camera.scale).tuple()))
 		if self.orientation == "Transistorupdown":
-			pygame.draw.rect(screen, self.color, ((self.pos-Vct(0.25, 0)-camera.pos * camera.scale).tuple(), ((self.pos+Vct(0.5, 0)-camera.pos * camera.scale).tuple())))
-			pygame.draw.rect(screen, colors["darkgray"], ((self.pos-Vct(0.25, 0)-camera.pos * camera.scale).tuple(), ((self.pos-Vct(0.5, 0)-camera.pos * camera.scale).tuple(), int(2*camera.scale))))
+			pygame.draw.rect(screen, self.color, (((self.pos-Vct(0.25, 0)-camera.pos )* camera.scale).tuple(), ((Vct(1.5, 1) * camera.scale).tuple())))
+			pygame.draw.rect(screen, self.colors["darkgray"], (((self.pos-Vct(0.25, 0)-camera.pos)* camera.scale).tuple(), ((Vct(1.5, 1) * camera.scale).tuple())),int(0.1 *camera.scale))
 		if self.orientation == "Transistorleftright":
 			pygame.draw.rect(screen, self.color, ((self.pos-Vct(0, 0.25)-camera.pos * camera.scale).tuple(), ((self.pos+Vct(0, 0.5)-camera.pos * camera.scale).tuple())))
-			pygame.draw.rect(screen, colors["darkgray"], ((self.pos-Vct(0, 0.25)-camera.pos * camera.scale).tuple(), ((self.pos+Vct(0, 0.5)-camera.pos * camera.scale).tuple(), int(2*camera.scale))))
+			pygame.draw.rect(screen, self.colors["darkgray"], ((self.pos-Vct(0, 0.25)-camera.pos * camera.scale).tuple(), ((self.pos+Vct(0, 0.5)-camera.pos * camera.scale).tuple(), int(2*camera.scale))))
 		if self.selected:
 			pygame.draw.rect(screen, (0, 255, 0), ((self.x)*scale + shift[0], (self.y)*scale + shift[1], (size)*scale, (size)*scale), 1)
 
@@ -103,45 +108,45 @@ class Transistor(Unit):
 			if (self.x + 1, self.y) in self.plus and (self.x - 1, self.y) in self.plus:
 				if self.plus[(self.x + 1, self.y)].life == 2:
 					if type(self.plus[(self.x - 1, self.y)]) == Wire:
-						self.plus[(self.x - 1, self.y)].life = 4
+						self.plus[(self.x - 1, self.y)].life = 3
 					elif type(self.plus[(self.x - 1, self.y)]) == Transistor:
 						if self.plus[(self.x-1, self.y)].orientation == "Transistorleftright":
 							self.plus[(self.x - 1, self.y)].blocked = 12
 						else:
-							self.plus[(self.x - 1, self.y)].life = 4
+							self.plus[(self.x - 1, self.y)].life = 3
 							
 		if self.orientation == "Dioderight":
 			if (self.x - 1, self.y) in self.plus and (self.x + 1, self.y) in self.plus:
 				if self.plus[(self.x - 1, self.y)].life == 2:
 					if type(self.plus[(self.x + 1, self.y)]) == Wire:
-						self.plus[(self.x + 1, self.y)].life = 4
+						self.plus[(self.x + 1, self.y)].life = 3
 					elif type(self.plus[(self.x + 1, self.y)]) == Transistor:
 						if self.plus[(self.x+1, self.y )].orientation == "Transistorleftright":
 							self.plus[(self.x + 1, self.y)].blocked = 12
 						else:
-							self.plus[(self.x + 1, self.y)].life = 4
+							self.plus[(self.x + 1, self.y)].life = 3
 
 		if self.orientation == "Diodeup":
 			if (self.x , self.y+ 1) in self.plus and (self.x , self.y- 1) in self.plus :
 				if self.plus[(self.x , self.y+ 1)].life == 2:
 					if type(self.plus[(self.x, self.y - 1)]) == Wire:
-						self.plus[(self.x, self.y - 1)].life = 4 
+						self.plus[(self.x, self.y - 1)].life = 3 
 					elif type(self.plus[(self.x, self.y - 1)]) == Transistor:
 						if self.plus[(self.x, self.y-1)].orientation == "Transistorupdown":
 							self.plus[(self.x, self.y - 1)].blocked = 12
 						else:
-							self.plus[(self.x, self.y - 1)].life = 4
+							self.plus[(self.x, self.y - 1)].life = 3
 						
 		if self.orientation == "Diodedown":
 			if (self.x , self.y- 1) in self.plus and (self.x , self.y+ 1) in self.plus:
 				if self.plus[(self.x , self.y- 1)].life == 2:
 					if type(self.plus[(self.x, self.y +1)]) == Wire:
-						self.plus[(self.x, self.y +1)].life = 4
+						self.plus[(self.x, self.y +1)].life = 3
 					elif type(self.plus[(self.x, self.y +1)]) == Transistor:
 						if self.plus[(self.x, self.y+1)].orientation == "Transistorupdown":
 							self.plus[(self.x, self.y +1)].blocked = 12
 						else:
-							self.plus[(self.x, self.y +1)].life = 4
+							self.plus[(self.x, self.y +1)].life = 3
 
 	def draw(self, screen,scale, shift):
 		if self.orientation == "Diodeleft":

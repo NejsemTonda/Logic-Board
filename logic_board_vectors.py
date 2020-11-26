@@ -3,7 +3,7 @@ class Vct():
 		self.x = x
 		self.y = y
 	def __add__(self, other):
-		if other is Vct:
+		if type(other) is Vct:
 			return Vct(self.x+other.x, self.y+other.y)
 		else:
 			raise TypeError ("Wrong type input, expect Vct, got {}".format(type(other)))
@@ -11,12 +11,14 @@ class Vct():
 		return Vct(self.x*n, self.y*n)
 	def __rmul__(self, n):
 		return self*n
+	def __sub__(self, other):
+		return Vct(self.x-other.x, self.y-other.y)
 
 	def tuple(self):
 		return (self.x, self.y)
 
 	def __repr__(self):
-		return (self.x, self.y)
+		return "({}, {})".format(self.x, self.y)
 
 	def __getitem__(self, key):
 		return (self.x, self.y)[key]
