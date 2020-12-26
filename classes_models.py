@@ -7,7 +7,7 @@ green = (0, 255, 0, 255)
 red = (255, 0, 0, 255)
 
 class Wire:
-	def draw(pos,screen, camera, selected = False):
+	def draw(pos,screen, camera, selected = False, orientation = None):
 		
 		pygame.draw.rect(screen, white, (((pos+Vct(0.05, 0.05))*camera.scale-camera.pos).tuple(), (Vct(0.9, 0.9)*camera.scale).tuple()))
 		if selected:
@@ -37,14 +37,14 @@ class Diode():
 			pygame.draw.rect(screen, green, (((pos+Vct(0.05, 0.05))*camera.scale-camera.pos).tuple(), (Vct(0.9, 0.9)*camera.scale).tuple()), 1)
 
 class Remove():
-	def draw(pos,screen, camera, selected = False):
+	def draw(pos,screen, camera, selected = False,orientation = None):
 		pygame.draw.line(screen, red, (pos*camera.scale-camera.pos).tuple(), (((pos+Vct(1, 1))*camera.scale-camera.pos).tuple()), int(0.2*camera.scale))
 		pygame.draw.line(screen, red, ((pos+Vct(1,0))*camera.scale-camera.pos).tuple(), (((pos+Vct(0, 1))*camera.scale-camera.pos).tuple()), int(0.2*camera.scale))
 		if selected:
 			pygame.draw.rect(screen, green, (((pos+Vct(0.05, 0.05))*camera.scale-camera.pos).tuple(), (Vct(0.9, 0.9)*camera.scale).tuple()), 1)
 
 class BringAlive():
-	def draw(pos,screen, camera, selected = False):
+	def draw(pos,screen, camera, selected = False,orientation = None):
 		pygame.draw.rect(screen, red, (((pos+Vct(0.05, 0.05))*camera.scale-camera.pos).tuple(), (Vct(0.9, 0.9)*camera.scale).tuple()))
 		if selected:
 			pygame.draw.rect(screen, green, (((pos+Vct(0.05, 0.05))*camera.scale-camera.pos).tuple(), (Vct(0.9, 0.9)*camera.scale).tuple()), 1)

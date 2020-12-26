@@ -20,7 +20,7 @@ class Wheel:
 		self.models = [models.Wire, models.Transistor, models.Diode, models.Remove, models.BringAlive]
 		#self.models = [models.Wire,models.Wire,models.Wire,models.Wire,models.Wire,models.Wire,models.Wire,models.Wire,models.Wire]
 		self.spacing = 2*math.pi/ len(self.models)
-		self.camera = camera.Camera()
+		self.camera = camera.Camera(Vct(0, 0), 20)
 		self.screensize = Vct(screen.get_size()[0], screen.get_size()[1])
 		self.closestToMouse = [models.Wire, float("inf")]
 
@@ -29,10 +29,12 @@ class Wheel:
 		if self.timer == 0:
 			return
 		
-		pygame.draw.circle(self.surface, (255, 255, 255, 50), (self.size/2).tuple(), self.r//2, self.r//4)
+		pygame.draw.circle(self.surface, (255, 255, 255, 100), (self.size/2).tuple(), self.r//2, self.r//4)
 		for i, m in enumerate(self.models):
 			if m == self.closestToMouse[0]:
 				selected = True
+				if self.timer > 50 and self.timer < 450: 
+					pygame.draw.arc(self.surface, (255, 255, 255), self.surface.get_rect(), -(self.spacing*(i+0.5) + math.pi/2), -(self.spacing*(i-0.5) + math.pi/2) , 4)
 			else:
 				selected = False
 			m.draw(polar_to_cartestian(3*self.r/(8*self.camera.scale), self.spacing*i + math.pi/2)+self.size/42, self.surface, self.camera, selected = selected)
@@ -42,7 +44,7 @@ class Wheel:
 
 	def update(self, mousepos):
 		
-
+		#self.timer = 300
 		if self.timer > 450:
 			self.r = (500-self.timer)*10
 		elif self.timer < 50:

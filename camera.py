@@ -1,9 +1,9 @@
 from vectors import Vct
 
 class Camera():
-	def __init__(self):
-		self.pos = Vct(0, 0)
-		self.scale = 20
+	def __init__(self, pos, scale):
+		self.pos = pos
+		self.scale = scale
 		self.shiftstart = Vct(0, 0)
 		self.shiftapplied = False
 
@@ -25,3 +25,6 @@ class Camera():
 
 		elif dir == "out":
 			self.scale *= 0.9
+
+	def make_copy(self):
+		return Camera(self.pos, self.scale)

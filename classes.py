@@ -1,12 +1,5 @@
 import pygame
 from vectors import Vct
-wirecolors = {0:(255,255,255),1:(255, 100, 100), 2:(255,50,50),3:(255, 0, 0), 4:(0, 255, 0)}
-transcolor = [(255, 255, 255), (127, 127, 127)]
-size = 1
-
-
-
-
 
 class Unit():
 	units = {}
@@ -18,9 +11,16 @@ class Unit():
 				  "right":Vct(1, 0)}
 
 	colors = {"grey": (127, 127, 127), 
-			  "lightgrey":(200, 200, 200), 
+			  "lightgrey":(180, 180, 180), 
 			  "white":(255, 255, 255), 
 			  "green":(0, 255, 0)}
+
+	wirecolors = {0:(255,255,255),
+				  1:(255, 100, 100), 
+				  2:(255,50,50),
+				  3:(255, 0, 0), 
+				  4:(0, 255, 0)}
+
 
 	shapes = {}
 	def __init__(self, pos):
@@ -28,6 +28,7 @@ class Unit():
 		self.neighbors = {}
 		self.life = 0
 		self.selected = False
+		self.orientation = None
 
 	def updateneighbors(self):
 		self.neighbors = {}
@@ -36,11 +37,11 @@ class Unit():
 				self.neighbors[d+self.pos] = self.units[d+self.pos]
 
 	def draw(self, screen, camera):
-		pygame.draw.rect(screen, wirecolors[self.life], (((self.pos+Vct(0.05, 0.05))*camera.scale-camera.pos).tuple(), (Vct(0.9, 0.9)*camera.scale).tuple()))
+		pygame.draw.rect(screen, self.wirecolors[self.life], (((self.pos+Vct(0.05, 0.05))*camera.scale-camera.pos).tuple(), (Vct(0.9, 0.9)*camera.scale).tuple()))
 		if self.selected:
-			pygame.draw.rect(screen, colors["green"], (((self.pos+Vct(0.05, 0.05))*camera.scale-camera.pos).tuple(), (Vct(0.9, 0.9)*camera.scale).tuple()), 1)
-
+			pygame.draw.rect(screen, self.colors["green"], (((self.pos)*camera.scale-camera.pos).tuple(), (Vct(1, 1)*camera.scale).tuple()), 1)
 	def make_new_itteration():
+		#print(Unit.units)
 		Unit.new_itteration = []
 		filtred_new_itter = []
 
@@ -70,7 +71,7 @@ class Wire(Unit):
 			self.life -=1
 			self.new_itteration.append(self.pos)
 
-	def make_new(pos):
+	def make_new(pos, orientation = None):
 		Unit.units[pos] = Wire(pos)
 		Unit.units[pos].updateneighbors()
 		for n in Unit.units[pos].neighbors.values():
@@ -101,7 +102,7 @@ class Transistor(Unit):
 
 		if self.blocked != 0:
 			self.life = 0
-			self.color = self.colors["grey"]
+			self.color = self.colors["lightgrey"]
 			self.blocked -=1
 			self.new_itteration.append(self.pos)
 		else:
@@ -120,12 +121,12 @@ class Transistor(Unit):
 	def draw(self, screen, camera):
 		if self.orientation == "upDown":
 			pygame.draw.rect(screen, self.color, (((self.pos-Vct(0.25, 0) )* camera.scale-camera.pos).tuple(), ((Vct(1.5, 1) * camera.scale).tuple())))
-			pygame.draw.rect(screen, self.colors["lightgrey"], (((self.pos-Vct(0.25, 0))* camera.scale-camera.pos).tuple(), ((Vct(1.5, 1)*camera.scale).tuple())),int(0.1 *camera.scale))
+			pygame.draw.rect(screen, self.colors["grey"], (((self.pos-Vct(0.25, 0))* camera.scale-camera.pos).tuple(), ((Vct(1.5, 1)*camera.scale).tuple())),int(0.1 *camera.scale))
 		if self.orientation == "leftRight":
 			pygame.draw.rect(screen, self.color, (((self.pos-Vct(0, 0.25) )* camera.scale-camera.pos).tuple(), ((Vct(1, 1.5) * camera.scale).tuple())))
-			pygame.draw.rect(screen, self.colors["lightgrey"], (((self.pos-Vct(0, 0.25))* camera.scale-camera.pos).tuple(), ((Vct(1, 1.5) * camera.scale).tuple())),int(0.1 *camera.scale))
+			pygame.draw.rect(screen, self.colors["grey"], (((self.pos-Vct(0, 0.25))* camera.scale-camera.pos).tuple(), ((Vct(1, 1.5) * camera.scale).tuple())),int(0.1 *camera.scale))
 		if self.selected:
-			pygame.draw.rect(screen, (0, 255, 0), ((self.x)*scale + shift[0], (self.y)*scale + shift[1], (size)*scale, (size)*scale), 1)
+			pygame.draw.rect(screen, self.colors["green"], (((self.pos)*camera.scale-camera.pos).tuple(), (Vct(1, 1)*camera.scale).tuple()), 1)
 
 	def make_new(pos, orientation):
 		Unit.units[pos] = Transistor(pos, orientation)
@@ -134,7 +135,7 @@ class Transistor(Unit):
 			n.updateneighbors()
 
 	def __repr__(self):
-		return("Transistor {} {} {}".format(self.x, self.y, self.orientation))
+		return("Transistor {} {} {}".format(self.pos.x, self.pos.y, self.orientation))
 
 
 
@@ -150,7 +151,7 @@ class Diode(Unit):
 		self.new_itteration.append(self.pos)
 
 	def update(self):
-		self.life = 0
+		self.life = 0: 
 		for d in self.directions:
 			if self.orientation == d:
 				if self.pos-self.directions[d] in self.living_units and self.neighbors[self.pos-self.directions[d]].life == 3:
@@ -159,12 +160,17 @@ class Diode(Unit):
 						self.new_itteration.append(self.pos+self.directions[d])
 		self.new_itteration.append(self.pos)
 
-	def draw(self, screen, camera): 
+	def draw(self,screen, camera): 
 		verts = [((vert+self.pos)*camera.scale-camera.pos).tuple() for vert in self.triangles[self.orientation]]
 		pygame.draw.polygon(screen, self.colors["grey"],verts)
+		if self.selected:
+			pygame.draw.rect(screen, self.colors["green"], (((self.pos)*camera.scale-camera.pos).tuple(), (Vct(1, 1)*camera.scale).tuple()), 1)
 
 	def make_new(pos, orientation):
 		Unit.units[pos] = Diode(pos, orientation)
 		Unit.units[pos].updateneighbors()
 		for n in Unit.units[pos].neighbors.values():
 			n.updateneighbors()
+
+	def __repr__(self):
+		return("Diode {} {} {}".format(self.pos.x, self.pos.y, self.orientation))
