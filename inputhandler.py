@@ -82,3 +82,8 @@ class Handler():
 		if keys[pygame.K_LCTRL] and keys[pygame.K_v]:
 			self.activeunit = "insertiontool"
 
+		if keys[pygame.K_LCTRL] and keys[pygame.K_s]:
+			filehandler.store_buffer()
+
+		if keys[pygame.K_LCTRL] and keys[pygame.K_l]:
+			filehandler.load()

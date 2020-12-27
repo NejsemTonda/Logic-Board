@@ -1,7 +1,7 @@
 from vectors import Vct
 import pygame
 import classes
-
+import os
 class Filehandler:
 	def __init__(self):
 		self.units = []
@@ -32,14 +32,54 @@ class Filehandler:
 		self.buffer = []
 		for pos in self.units:
 			classes.Unit.units[pos].selected = False
-			rel_pos = pos - self.rect[0]
+			rel_pos = pos - self.rect[0]-round(self.rect[1]/2)
 			self.buffer.append([rel_pos, type(classes.Unit.units[pos]), classes.Unit.units[pos].orientation])
 		self.untis = []
 		self.rect = [Vct(0, 0), Vct(0, 0)]
 		print(self.buffer)
 
-	def load(file):
-		pass
+	def load(self):
+		self.buffer = []
+		list = [name for name in os.listdir() if ".txt" in name]
+		for i, name in enumerate(list):
+			print(str(i+1) + ". " + name)
+		file = open(list[int(input("select number of file:"))-1])
+		for line in file.readlines():
+			line = line.strip().split(" ")
+			line[0] = [s.strip("()") for s in line[0].split(",")]
+			if line[1] == "wire":
+				self.buffer.append([Vct(int(line[0][0]), int(line[0][1])), classes.Wire, line[2]])
+			if line[1] == "diode":
+				self.buffer.append([Vct(int(line[0][0]), int(line[0][1])), classes.Diode, line[2]])
+			if line[1] == "transistor":
+				self.buffer.append([Vct(int(line[0][0]), int(line[0][1])), classes.Transistor, line[2]])
+
+	def store_buffer(self):
+		file = None
+		fileName = input("Enter file name: ")
+		while fileName+".txt" in os.listdir() and file == None:
+			des = input("This file already extis, do you wanna overwrite it ? (y/n)")
+			if des == "y":
+				file = open(fileName+".txt", "w")
+			elif des == "n":
+				fileName = input("Enter file name: ")
+
+		if file == None:
+			file = open(fileName+".txt", "x")
+
+		for info in self.buffer:
+			if info[1] == classes.Wire: 
+				info[1] = " wire "
+			elif info[1] == classes.Diode: 
+				info[1] = " diode "
+			elif info[1] == classes.Transistor: 
+				info[1] = " transistor "
+			else:
+				print("wrong info:" + info)
+
+			file.write(str(info[0])+info[1]+str(info[2]) + "\n")
+		file.close()
+
 	def blit_copy(self, mousexy):
 		for info in self.buffer:
 			info[1].make_new(mousexy + info[0] , info[2])

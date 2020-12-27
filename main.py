@@ -6,6 +6,7 @@ import camera
 import selection_wheel
 import preview
 import filehandler 
+
 class Game():
 	def __init__(self):
 		self.end = False
@@ -26,7 +27,8 @@ class Game():
 		self.tick = (self.tick+1)%self.tickrate
 		if self.tick == 0:
 			classes.Unit.make_new_itteration()
-		self.draw()
+		if not self.keys[pygame.K_d]:
+			self.draw()
 		self.inputhandler.update(self.keys, self.m1, self.mousepos, self.camera, self.sWheel, self.filehandler)
 		self.camera.update(self.m2, self.mousepos)
 		self.sWheel.update(self.mousepos)
@@ -37,10 +39,7 @@ class Game():
 		for u in classes.Unit.units.values():
 			u.draw(self.screen, self.camera)
 		self.sWheel.draw(self.screen)
-		if self.inputhandler.activeunit == "insertiontool":
-			preview.Preview.draw(self.screen, self.camera, self.inputhandler, self.filehandler.buffer)
-		else:
-			preview.Preview.draw(self.screen, self.camera, self.inputhandler)
+		preview.Preview.draw(self.screen, self.camera, self.inputhandler, self.filehandler.buffer)
 		self.filehandler.draw(self.screen, self.camera)
 		pygame.display.update()
 		
@@ -64,7 +63,7 @@ class Game():
 			self.m2 = pygame.mouse.get_pressed()[2]
 			self.update()
 			self.clock.tick(120)
-			#print(self.clock.get_fps())
+			#print(round(self.clock.get_fps()))
 if __name__ == "__main__":
 	game = Game()
 	print(game)

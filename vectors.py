@@ -18,7 +18,7 @@ class Vct():
 		return Vct(self.x/n, self.y/n)
 
 	def __repr__(self):
-		return "({}, {})".format(self.x, self.y)
+		return "({},{})".format(self.x, self.y)
 
 	def __getitem__(self, key):
 		return (self.x, self.y)[key]

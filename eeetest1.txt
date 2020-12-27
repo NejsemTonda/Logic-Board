@@ -1,0 +1,4 @@
+(0, 0) diode left
+(1, 0) diode up
+(1, 1) diode right
+(0, 1) diode down

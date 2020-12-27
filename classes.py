@@ -63,9 +63,10 @@ class Wire(Unit):
 	def update(self):
 		if self.life == 3:
 			for u in self.neighbors.values():
-				if u.life == 0:
-					self.new_itteration.append(u.pos)
-					u.life = 3
+				if type(u) != Diode:
+					if u.life == 0:
+						self.new_itteration.append(u.pos)
+						u.life = 3
 
 		if self.life != 0:
 			self.life -=1
@@ -110,9 +111,10 @@ class Transistor(Unit):
 
 		if self.life == 3:
 			for u in self.neighbors.values():
-				if u.life == 0:
-					self.new_itteration.append(u.pos)
-					u.life = 3
+				if type(u) != Diode:
+					if u.life == 0:
+						self.new_itteration.append(u.pos)
+						u.life = 3
 					
 		if self.life != 0:
 			self.life -=1
@@ -122,7 +124,7 @@ class Transistor(Unit):
 		if self.orientation == "upDown":
 			pygame.draw.rect(screen, self.color, (((self.pos-Vct(0.25, 0) )* camera.scale-camera.pos).tuple(), ((Vct(1.5, 1) * camera.scale).tuple())))
 			pygame.draw.rect(screen, self.colors["grey"], (((self.pos-Vct(0.25, 0))* camera.scale-camera.pos).tuple(), ((Vct(1.5, 1)*camera.scale).tuple())),int(0.1 *camera.scale))
-		if self.orientation == "leftRight":
+		elif self.orientation == "leftRight":
 			pygame.draw.rect(screen, self.color, (((self.pos-Vct(0, 0.25) )* camera.scale-camera.pos).tuple(), ((Vct(1, 1.5) * camera.scale).tuple())))
 			pygame.draw.rect(screen, self.colors["grey"], (((self.pos-Vct(0, 0.25))* camera.scale-camera.pos).tuple(), ((Vct(1, 1.5) * camera.scale).tuple())),int(0.1 *camera.scale))
 		if self.selected:
@@ -151,13 +153,17 @@ class Diode(Unit):
 		self.new_itteration.append(self.pos)
 
 	def update(self):
-		self.life = 0: 
+		self.life = 0
 		for d in self.directions:
 			if self.orientation == d:
 				if self.pos-self.directions[d] in self.living_units and self.neighbors[self.pos-self.directions[d]].life == 3:
 					if self.pos+self.directions[d] in self.neighbors:
-						self.neighbors[self.pos+self.directions[d]].life = 3
-						self.new_itteration.append(self.pos+self.directions[d])
+						if type(self.neighbors[self.pos+self.directions[d]]) == Transistor and not d in self.neighbors[self.pos+self.directions[d]].orientation.lower():
+							self.neighbors[self.pos+self.directions[d]].blocked = 12
+							self.new_itteration.append(self.pos+self.directions[d])
+						else:
+							self.neighbors[self.pos+self.directions[d]].life = 3
+							self.new_itteration.append(self.pos+self.directions[d])
 		self.new_itteration.append(self.pos)
 
 	def draw(self,screen, camera): 
