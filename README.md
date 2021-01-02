@@ -60,7 +60,7 @@ Tennto nástroj nalezneme ve [výběrovém kolečku](https://github.com/NejsemTo
 Slouží k odstranění buňky 
 
 ### Revive
-![Revive](/docs/pics/alive)
+![Revive](/docs/pics/alive.png)
 
 Tennto nástroj nalezneme ve [výběrovém kolečku](https://github.com/NejsemTonda/Logic-Board/new/main?readme=1#ovl%C3%A1d%C3%A1n%C3%AD).
 
