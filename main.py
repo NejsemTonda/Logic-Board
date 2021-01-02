@@ -5,9 +5,7 @@
 # Popis:                                                                                                              #
 # Celulární automat sloužící k simulaci logiky na elektrických obvodech                                               #
 #######################################################################################################################
-#######################################################################################################################
-#                                                                                                                     #
-#######################################################################################################################
+
 
 
 
@@ -25,11 +23,11 @@ import filehandler
 class Game():
 	def __init__(self):
 		self.end = False
-		self.screen = pygame.display.set_mode((1800, 1000))#,pygame.FULLSCREEN
+		self.screen = pygame.display.set_mode((1800, 1000))
 		self.clock = pygame.time.Clock()
 		self.tick = 0
 		self.tickrate = 8
-		self.key = []
+		self.keys = []
 		self.mousepos = Vct(0, 0)
 		self.m1 = False
 		self.m2 = False 
@@ -74,9 +72,11 @@ class Game():
 					if event.button == 5:
 						self.camera.zoom("out", self.mousepos)
 			self.update()
-			self.draw()
+			if not self.keys[pygame.K_d]:
+				self.draw()
+
 			self.clock.tick(120)
-			print(self.clock.get_fps())
+			#print(self.clock.get_fps())
 
 if __name__ == "__main__":
 	game = Game()
