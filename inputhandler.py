@@ -1,3 +1,7 @@
+#######################################################################################################################
+#Třida inputhandler se stará o všechny inputy od uživatele s vyhodnocuje je                                           #
+#######################################################################################################################
+
 import pygame
 import classes
 from vectors import Vct
@@ -6,14 +10,14 @@ import classes_models
 
 class Handler():
 	def __init__(self):
-		self.mousexy = Vct(0, 0)
-		self.activeunit = classes_models.Wire
-		self.keys = []
+		self.mousexy = Vct(0, 0) # pozice kurzoru relativně vůči zvětšení a posunu kamery
+		self.activeunit = classes_models.Wire # Třída, jež je uložena s této proměnné se bude vytvářet při klikání myši
+		self.keys = {}
 		self.buttonpressed = False
 		self.transistorRotation = [["upDown", "leftRight"], 0]
 		self.diodeRotation = [["left", "up", "right", "down"], 0]
 	def update(self, keys, m1, mousepos,camera,wheel, filehandler):
-		self.mousexy = round(((mousepos+camera.pos) - (mousepos+camera.pos)%camera.scale)/camera.scale)
+		self.mousexy = round(((mousepos+camera.pos) - (mousepos+camera.pos)%camera.scale)/camera.scale) 
 		self.keys = keys
 		self.m1 = m1
 		
@@ -28,20 +32,20 @@ class Handler():
 				elif self.activeunit == classes_models.Diode:
 					classes.Diode.make_new(self.mousexy, self.diodeRotation[0][self.diodeRotation[1]])
 
-				elif self.activeunit == classes_models.BringAlive:
+				elif self.activeunit == classes_models.BringAlive: #ožíví vybranou buňku
 					if self.mousexy in classes.Unit.units:
 						classes.Unit.units[self.mousexy].life = 3
 						classes.Unit.living_units.append(self.mousexy)
 
-				elif self.activeunit == classes_models.Remove:
+				elif self.activeunit == classes_models.Remove: #odstraní buňky
 					if self.mousexy in classes.Unit.units:
 						neighbors = classes.Unit.units[self.mousexy].neighbors
-						del classes.Unit.units[self.mousexy]
-						if self.mousexy in classes.Unit.new_itteration:
+						del classes.Unit.units[self.mousexy] #odstraní buňku se seznamu všech buňek
+						if self.mousexy in classes.Unit.new_itteration: #odstraní buňku z nové iterace
 							classes.Unit.new_itteration.remove(self.mousexy)
-						if self.mousexy in classes.Unit.living_units:
+						if self.mousexy in classes.Unit.living_units: #odstraní buňky z žíjících buňek
 							classes.Unit.living_units.remove(self.mousexy)
-						for n in neighbors:
+						for n in neighbors: #updatetuje všechny sousedy odstraněné buňky aby se jí nesnažily oživit
 							classes.Unit.units[n].updateneighbors()
 
 				elif self.activeunit == "copytool":
@@ -77,7 +81,7 @@ class Handler():
 
 		if self.activeunit == "copytool" and not self.m1 and filehandler.rect != [Vct(0, 0), Vct(0, 0)]:
 			filehandler.save()
-			self.activeunit = classes_models.Wire
+			self.activeunit = "insertiontool"
 
 		if keys[pygame.K_LCTRL] and keys[pygame.K_v]:
 			self.activeunit = "insertiontool"
@@ -87,3 +91,4 @@ class Handler():
 
 		if keys[pygame.K_LCTRL] and keys[pygame.K_l]:
 			filehandler.load()
+			self.activeunit = "insertiontool"

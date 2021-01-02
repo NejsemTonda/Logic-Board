@@ -1,3 +1,8 @@
+#######################################################################################################################
+# Modely tříd classes_models slouží k ulehčení funkcí draw() u tříd preview a selection wheel                         #
+# Jsou zde přidané nové třídy Remove a BringAlive, jejichž funcke jsou vysvětleny v inputhandler                      #
+#######################################################################################################################
+
 import pygame
 from vectors import Vct
 grey = (127, 127, 127, 255) 

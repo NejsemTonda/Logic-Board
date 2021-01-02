@@ -2,11 +2,12 @@ from vectors import Vct
 import pygame
 import classes
 import os
+
 class Filehandler:
 	def __init__(self):
-		self.units = []
-		self.buffer = []
-		self.rect = [Vct(0, 0), Vct(0, 0)]
+		self.units = [] # v tomto listu jsou uložené všechny buňky, jež jsou označeny výběrem
+		self.buffer = [] # slouží k ukládání a nahrávání buňek
+		self.rect = [Vct(0, 0), Vct(0, 0)] # obdelník ukazující výběr
 
 	def update(self, mousexy):
 		self.units = []
@@ -28,7 +29,7 @@ class Filehandler:
 			pygame.draw.rect(screen, (0, 255, 0),( (self.rect[0]*camera.scale-camera.pos).tuple(),  ((self.rect[1]+Vct(1, 1))*camera.scale).tuple()), 1)
 
 
-	def save(self):
+	def save(self): #uloží buňky co jsou ve výběru označeném čtvercem a uloží je do listu self.buffer
 		self.buffer = []
 		for pos in self.units:
 			classes.Unit.units[pos].selected = False
@@ -38,13 +39,19 @@ class Filehandler:
 		self.rect = [Vct(0, 0), Vct(0, 0)]
 		print(self.buffer)
 
-	def load(self):
+	def load(self): # Z uložených textových souborů vytvoří buffer, který lze poté vložit do simulace
 		self.buffer = []
 		list = [name for name in os.listdir() if ".txt" in name]
+
 		for i, name in enumerate(list):
-			print(str(i+1) + ". " + name)
-		file = open(list[int(input("select number of file:"))-1])
-		for line in file.readlines():
+			print(str(i+1) + ". " + name) # tímto se usnadní výběr souboru, uživatel nemusí psát celý název, stačí pouze číslo
+		try:
+			file = open(list[int(input("select number of file:"))-1])
+		except IndexError:
+			print("There is no file with that number :(")
+			return
+
+		for line in file.readlines(): # tímto cyklem se načítá soubor do bufferu
 			line = line.strip().split(" ")
 			line[0] = [s.strip("()") for s in line[0].split(",")]
 			if line[1] == "wire":
@@ -54,7 +61,7 @@ class Filehandler:
 			if line[1] == "transistor":
 				self.buffer.append([Vct(int(line[0][0]), int(line[0][1])), classes.Transistor, line[2]])
 
-	def store_buffer(self):
+	def store_buffer(self): # tato funkce slouží k uložení list self.buffer do textovécho souboru
 		file = None
 		fileName = input("Enter file name: ")
 		while fileName+".txt" in os.listdir() and file == None:
@@ -80,7 +87,7 @@ class Filehandler:
 			file.write(str(info[0])+info[1]+str(info[2]) + "\n")
 		file.close()
 
-	def blit_copy(self, mousexy):
+	def blit_copy(self, mousexy): # tato funkce umístí všechny buňky v listu buffer do světa simulace
 		for info in self.buffer:
 			info[1].make_new(mousexy + info[0] , info[2])
 

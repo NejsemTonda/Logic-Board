@@ -1,3 +1,18 @@
+#######################################################################################################################
+# Václa Krňák                                                                                                         #
+# Zápočtový program: Logic Board                                                                                      #
+# programování NPRG030-062                                                                                            #
+# Popis:                                                                                                              #
+# Celulární automat sloužící k simulaci logiky na elektrických obvodech                                               #
+#######################################################################################################################
+#######################################################################################################################
+#                                                                                                                     #
+#######################################################################################################################
+
+
+
+
+
 import pygame
 import classes
 from vectors import Vct
@@ -10,7 +25,7 @@ import filehandler
 class Game():
 	def __init__(self):
 		self.end = False
-		self.screen = pygame.display.set_mode((1400, 800))#,pygame.FULLSCREEN
+		self.screen = pygame.display.set_mode((1800, 1000))#,pygame.FULLSCREEN
 		self.clock = pygame.time.Clock()
 		self.tick = 0
 		self.tickrate = 8
@@ -24,11 +39,15 @@ class Game():
 		self.filehandler = filehandler.Filehandler()
 	
 	def update(self):
+		self.keys = pygame.key.get_pressed()
+		if self.keys[pygame.K_ESCAPE]:
+			self.end = True
+		self.mousepos = Vct(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+		self.m1 = pygame.mouse.get_pressed()[0]
+		self.m2 = pygame.mouse.get_pressed()[2]
 		self.tick = (self.tick+1)%self.tickrate
 		if self.tick == 0:
 			classes.Unit.make_new_itteration()
-		if not self.keys[pygame.K_d]:
-			self.draw()
 		self.inputhandler.update(self.keys, self.m1, self.mousepos, self.camera, self.sWheel, self.filehandler)
 		self.camera.update(self.m2, self.mousepos)
 		self.sWheel.update(self.mousepos)
@@ -48,22 +67,17 @@ class Game():
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.end = True
+					break
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					if event.button == 4:
 						self.camera.zoom("in", self.mousepos)
 					if event.button == 5:
 						self.camera.zoom("out", self.mousepos)
-
-
-			self.keys = pygame.key.get_pressed()
-			if self.keys[pygame.K_ESCAPE]:
-				self.end = True
-			self.mousepos = Vct(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
-			self.m1 = pygame.mouse.get_pressed()[0]
-			self.m2 = pygame.mouse.get_pressed()[2]
 			self.update()
+			self.draw()
 			self.clock.tick(120)
-			#print(round(self.clock.get_fps()))
+			print(self.clock.get_fps())
+
 if __name__ == "__main__":
 	game = Game()
 	print(game)

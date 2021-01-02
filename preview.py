@@ -1,3 +1,9 @@
+###########################################################################################################################
+# Třída Preview slouží pouze k náhledu buňky, kterou se chystéme pokládat, její orientaci nebo k buferu třídy Filehandler #
+###########################################################################################################################
+
+
+
 import pygame
 import classes_models
 import classes
