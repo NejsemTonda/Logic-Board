@@ -25,7 +25,7 @@ class Preview:
 					classes_models.Diode.draw(handler.mousexy+info[0], screen, camera, orientation = info[2])
 				elif info[1] == classes.Wire:
 					classes_models.Wire.draw(handler.mousexy+info[0], screen, camera)
-		elif handler.activeunit == "copytool":
+		elif handler.activeunit == "copytool" or handler.activeunit == "croptool":
 			pass
 		else:
 			handler.activeunit.draw(handler.mousexy, screen, camera)

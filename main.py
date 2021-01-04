@@ -8,9 +8,6 @@
 
 
 
-
-
-
 import pygame
 import classes
 from vectors import Vct

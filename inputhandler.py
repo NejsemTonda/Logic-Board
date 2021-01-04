@@ -39,17 +39,11 @@ class Handler():
 
 				elif self.activeunit == classes_models.Remove: #odstraní buňky
 					if self.mousexy in classes.Unit.units:
-						neighbors = classes.Unit.units[self.mousexy].neighbors
-						del classes.Unit.units[self.mousexy] #odstraní buňku se seznamu všech buňek
-						if self.mousexy in classes.Unit.new_itteration: #odstraní buňku z nové iterace
-							classes.Unit.new_itteration.remove(self.mousexy)
-						if self.mousexy in classes.Unit.living_units: #odstraní buňky z žíjících buňek
-							classes.Unit.living_units.remove(self.mousexy)
-						for n in neighbors: #updatetuje všechny sousedy odstraněné buňky aby se jí nesnažily oživit
-							classes.Unit.units[n].updateneighbors()
+						classes.Unit.delete_cell(self.mousexy)
 
-				elif self.activeunit == "copytool":
-					filehandler.update(self.mousexy)
+				elif self.activeunit == "copytool" or self.activeunit == "croptool":
+					filehandler.mark(self.mousexy)
+
 				elif self.activeunit == "insertiontool":
 					filehandler.blit_copy(self.mousexy)
 					
@@ -78,6 +72,7 @@ class Handler():
 
 		if keys[pygame.K_LCTRL] and keys[pygame.K_c]:
 			self.activeunit = "copytool"
+			filehandler.is_crop = False
 
 		if self.activeunit == "copytool" and not self.m1 and filehandler.rect != [Vct(0, 0), Vct(0, 0)]:
 			filehandler.save()
@@ -91,4 +86,12 @@ class Handler():
 
 		if keys[pygame.K_LCTRL] and keys[pygame.K_l]:
 			filehandler.load()
+			self.activeunit = "insertiontool"
+
+		if keys[pygame.K_LCTRL] and keys[pygame.K_x]:
+			filehandler.is_crop = True
+			self.activeunit = "croptool"
+
+		if self.activeunit == "croptool" and not self.m1 and filehandler.rect != [Vct(0, 0), Vct(0, 0)]:
+			filehandler.crop()
 			self.activeunit = "insertiontool"

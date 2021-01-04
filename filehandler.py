@@ -8,8 +8,9 @@ class Filehandler:
 		self.units = [] # v tomto listu jsou uložené všechny buňky, jež jsou označeny výběrem
 		self.buffer = [] # slouží k ukládání a nahrávání buňek
 		self.rect = [Vct(0, 0), Vct(0, 0)] # obdelník ukazující výběr
+		self.is_crop = False
 
-	def update(self, mousexy):
+	def mark(self, mousexy):
 		self.units = []
 		if self.rect[0] == Vct(0, 0):
 			self.rect[0] = mousexy
@@ -22,11 +23,26 @@ class Filehandler:
 			else:
 				classes.Unit.units[pos].selected = False
 
+	def crop(self):
+		self.buffer = []
+		for pos in self.units:
+			classes.Unit.units[pos].selected = False
+			rel_pos = pos - self.rect[0]-round(self.rect[1]/2)
+			self.buffer.append([rel_pos, type(classes.Unit.units[pos]), classes.Unit.units[pos].orientation])
+			classes.Unit.delete_cell(pos)
+		self.is_crop = False
+		self.untis = []
+		self.rect = [Vct(0, 0), Vct(0, 0)]
+		print(self.buffer)
+
 	def draw(self, screen, camera):
 		if self.rect == [Vct(0, 0), Vct(0, 0)]:
 			return
 		else: 
-			pygame.draw.rect(screen, (0, 255, 0),( (self.rect[0]*camera.scale-camera.pos).tuple(),  ((self.rect[1]+Vct(1, 1))*camera.scale).tuple()), 1)
+			if not self.is_crop:
+				pygame.draw.rect(screen, (0, 255, 0),( (self.rect[0]*camera.scale-camera.pos).tuple(),  ((self.rect[1]+Vct(1, 1))*camera.scale).tuple()), 1)
+			else:
+				pygame.draw.rect(screen, (255, 0, 0),( (self.rect[0]*camera.scale-camera.pos).tuple(),  ((self.rect[1]+Vct(1, 1))*camera.scale).tuple()), 1)
 
 
 	def save(self): #uloží buňky co jsou ve výběru označeném čtvercem a uloží je do listu self.buffer

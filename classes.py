@@ -64,6 +64,16 @@ class Unit():
 
 		Unit.living_units = Unit.new_itteration
 
+	def delete_cell(pos):
+		neighbors = Unit.units[pos].neighbors
+		del Unit.units[pos] #odstraní buňku se seznamu všech buňek
+		if pos in Unit.new_itteration: #odstraní buňku z nové iterace
+			Unit.new_itteration.remove(pos)
+		if pos in Unit.living_units: #odstraní buňky z žíjících buňek
+			Unit.living_units.remove(pos)
+		for n in neighbors: #updatetuje všechny sousedy odstraněné buňky aby se jí nesnažily oživit
+			Unit.units[n].updateneighbors()
+
 class Wire(Unit):
 	"""
 	Třída Wire je nejprimitivnější jednotkou této simulace, pokud je naživu, oživí všechny svoje mrtvé sousedy
@@ -113,12 +123,12 @@ class Transistor(Unit):
 		if self.orientation == "upDown":
 			for d in ["left", "right"]:
 				if self.pos + self.directions[d] in self.neighbors and self.neighbors[self.pos + self.directions[d]].life != 0:
-					self.blocked = 12
+					self.blocked = 8
 
 		if self.orientation == "leftRight":
 			for d in ["up", "down"]:
 				if self.pos + self.directions[d] in self.neighbors and self.neighbors[self.pos + self.directions[d]].life != 0:
-					self.blocked = 12
+					self.blocked = 8
 
 		if self.blocked != 0:
 			self.life = 0
@@ -184,9 +194,9 @@ class Diode(Unit):
 				if self.pos-self.directions[d] in self.living_units and self.neighbors[self.pos-self.directions[d]].life == 3:
 					if self.pos+self.directions[d] in self.neighbors:
 						if type(self.neighbors[self.pos+self.directions[d]]) == Transistor and not d in self.neighbors[self.pos+self.directions[d]].orientation.lower():
-							self.neighbors[self.pos+self.directions[d]].blocked = 12
+							self.neighbors[self.pos+self.directions[d]].blocked = 8
 							self.new_itteration.append(self.pos+self.directions[d])
-							# speciálné je zde ošetřená interakce s tranzistorem, ten se zablokuje byl-li oživen Diodou
+							# speciálné je zde ošetřená interakce s tranzistorem, ten se zablokuje byl-li oživen Diodou při odpovídající orientaci
 						else:
 							self.neighbors[self.pos+self.directions[d]].life = 3
 							self.new_itteration.append(self.pos+self.directions[d])
