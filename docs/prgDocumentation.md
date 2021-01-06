@@ -1,18 +1,18 @@
 # Programátorská dokumentace 
 Tato dokumentace obshaje: 
-- [simulace světa](# simulace světa)
-  - funkce [`update()`](#`update()`)
-  - [třída `Unit` a její podtřídy](#Třída `Unit` a její podtřídy)
-    - [`Unit.update()`](#)
-  - třída `Vct`
-- zvládání inputů uživatele 
-  - výběrové kolečko
-- vykreslování
-  - funkce `draw()`
-    - `classes_models.py`
-  - `Camera`
-  - rychlý náhled
-- Testy a příklady 
+- [simulace světa](#simulace-světa)
+  - funkce [`update()`](#update)
+  - [třída `Unit` a její podtřídy](#třída-unit-a-její-podtřídy)
+    - [`Unit.update()`](#unitupdate)
+  - třída [`Vct`](#třída-vct)
+- [zvládání inputů uživatel](#zvládání-inputů-uživatele)
+  - [výběrové kolečko](#výběrové-kolečko)
+- [vykreslování](#vykreslování)
+  - funkce [`draw()`](#funkce-draw)
+    - [`classes_models.py`](#classes_modelspy)
+  - [`Camera`](#camera)
+  - [rychlý náhled](#rychlý-náhled)
+- [Testy a příklady](#testy) 
   - binary counter
   - křižovatka 
   - calucator 
@@ -87,12 +87,22 @@ Je v souboru `preview.py` ukazuje `Handler.activeunit` nna pozici `Handler.mouse
 ## Testy
 Testy jsou předpřipravené textové soubory, nahrajeme je pomocí [**Load**](Logic-Board/README.md#load)
 #### Repeater
+![repeater](docs/pic/repeater.gif)
 Sebe oživující soustava. Oživý buňky vedle sebe každou pátou iteraci
 #### Binary counter
+![binary](docs/pic/binary.gif)
 Má jeden input a jeden output. Jakou output dá každý druhý input. Může být použit jako binární počítadlo
 #### Crossway
+![corssway](docs/pic/crossway.gif)
 Křizovatka, signál ze shora se nesmíchá se signálem ze zdola
 #### Computer
+Z těchto základní komponentů už můžeme sestavit nějaký větší projekt, já jsem dal dohromady sčítací obvod.
+
+nahoře jsou dvě paměťové buňky, každá z ních dokáže uložit 4 bity, v bude po sečtení (**R**) zapsáná výsledek (LSB dole)
+
+![computer](docs/pic/computer.png)
+
+![computer_done](docs/pic/computer_done.gif)
 
 
 
