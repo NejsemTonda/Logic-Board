@@ -87,22 +87,22 @@ Je v souboru `preview.py` ukazuje `Handler.activeunit` nna pozici `Handler.mouse
 ## Testy
 Testy jsou předpřipravené textové soubory, nahrajeme je pomocí [**Load**](Logic-Board/README.md#load)
 #### Repeater
-![repeater](docs/pic/repeater.gif)
+![repeater](pics/repeater.gif)
 Sebe oživující soustava. Oživý buňky vedle sebe každou pátou iteraci
 #### Binary counter
-![binary](docs/pic/binary.gif)
+![binary](pics/binary.gif)
 Má jeden input a jeden output. Jakou output dá každý druhý input. Může být použit jako binární počítadlo
 #### Crossway
-![corssway](docs/pic/crossway.gif)
+![corssway](pics/crossway.gif)
 Křizovatka, signál ze shora se nesmíchá se signálem ze zdola
 #### Computer
 Z těchto základní komponentů už můžeme sestavit nějaký větší projekt, já jsem dal dohromady sčítací obvod.
 
 nahoře jsou dvě paměťové buňky, každá z ních dokáže uložit 4 bity, v bude po sečtení (**R**) zapsáná výsledek (LSB dole)
 
-![computer](docs/pic/computer.png)
+![computer](pics/computer.png)
 
-![computer_done](docs/pic/computer_done.gif)
+![computer_done](pics/computer_done.gif)
 
 
 
