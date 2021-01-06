@@ -1,0 +1,6 @@
+(-1,0) diode up
+(-1,1) wire None
+(0,1) wire None
+(0,0) wire None
+(0,-1) wire None
+(-1,-1) wire None
